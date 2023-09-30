@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-payments-table
+      author: a.matyushin
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: payments_pk
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: order_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: check_amount
+                  type: numeric
+              - column:
+                  constraints:
+                    nullable: false
+                  name: payment_status
+                  type: VARCHAR(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: payment_type
+                  type: VARCHAR(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_date
+                  type: TIMESTAMP WITHOUT TIME ZONE
+            tableName: payments
+
