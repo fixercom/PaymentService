@@ -1,0 +1,17 @@
+spring:
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5401/postgres
+    username: postgres
+    password: admin
+
+  liquibase:
+    change-log: db/changelog/liquibase-master.yml
+
+springdoc:
+
+    swagger-ui:
+      path: /swagger-ui
+
+

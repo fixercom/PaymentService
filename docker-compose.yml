@@ -4,7 +4,7 @@ services:
 
   database:
     image: postgres
-    container_name: postgres-container-mtr
+    container_name: postgres-container-payment-service
     ports:
       - "5401:5432"
     environment:

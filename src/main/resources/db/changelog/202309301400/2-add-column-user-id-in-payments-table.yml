@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2-add-column-user-id-in-payments-table.
+      author: a.matyushin
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+            tableName: payments
+
