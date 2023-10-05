@@ -11,6 +11,7 @@ import ru.aston.intensive.paymentservice.dto.Receipt;
 import ru.aston.intensive.paymentservice.mapper.PaymentMapper;
 import ru.aston.intensive.paymentservice.service.PaymentService;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDto payOrder(Long orderId, NewPaymentDto newPaymentDto) {
         Payment payment = paymentMapper.toPayment(orderId, newPaymentDto);
+        payment.setCreatedDate(LocalDateTime.now());
         PaymentStatus paymentStatus = generatePaymentStatus();
         payment.setPaymentStatus(paymentStatus);
         paymentRepository.save(payment);
