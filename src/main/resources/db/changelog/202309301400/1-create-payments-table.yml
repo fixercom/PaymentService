@@ -32,7 +32,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: payment_type
-                  type: VARCHAR(10)
+                  type: VARCHAR(20)
               - column:
                   constraints:
                     nullable: false
