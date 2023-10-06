@@ -22,4 +22,5 @@ public class PaymentController {
     public PaymentDto payOrder(@PathVariable Long orderId, @RequestBody NewPaymentDto newPaymentDto) {
         return paymentService.payOrder(orderId, newPaymentDto);
     }
+
 }
