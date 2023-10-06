@@ -24,9 +24,6 @@ public class Payment {
     @Column(name = "order_id", nullable = false)
     private Long orderId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     @Column(name = "check_amount", nullable = false)
     private BigDecimal checkAmount;
 
