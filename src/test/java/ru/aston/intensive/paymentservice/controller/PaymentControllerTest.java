@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class PaymentControllerTest {
