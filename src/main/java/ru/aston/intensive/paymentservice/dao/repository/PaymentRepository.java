@@ -5,11 +5,12 @@ import ru.aston.intensive.paymentservice.dao.entity.Payment;
 import ru.aston.intensive.paymentservice.dao.enums.PaymentStatus;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    Optional<Payment> findByOrderId(Long orderId);
+    Optional<Payment> findByOrderId(UUID orderId);
 
-    Optional<Payment> findByOrderIdAndPaymentStatus(Long orderId, PaymentStatus paymentStatus);
+    Optional<Payment> findByOrderIdAndPaymentStatus(UUID orderId, PaymentStatus paymentStatus);
 
 }

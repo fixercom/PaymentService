@@ -1,12 +1,24 @@
 package ru.aston.intensive.paymentservice.dao.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.aston.intensive.paymentservice.dao.enums.PaymentStatus;
 import ru.aston.intensive.paymentservice.dao.enums.PaymentType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -22,7 +34,7 @@ public class Payment {
     private Long id;
 
     @Column(name = "order_id", nullable = false)
-    private Long orderId;
+    private UUID orderId;
 
     @Column(name = "check_amount", nullable = false)
     private BigDecimal checkAmount;

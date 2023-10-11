@@ -17,6 +17,7 @@ import ru.aston.intensive.paymentservice.service.PaymentService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 
@@ -32,11 +33,13 @@ class PaymentControllerTest {
 
     @Test
     void getReceiptByOrderId_whenCorrectRequest_thenCorrectResponse() throws Exception {
-        Receipt receipt = new Receipt(1L, 10L, new BigDecimal(1), PaymentType.CREDIT_CARD, LocalDateTime.parse("2023-10-06T01:16:56"));
-        when(paymentService.getReceiptByOrderId(1L)).thenReturn(receipt);
-        mockMvc.perform(MockMvcRequestBuilders.get("/payment/1/check"))
+        UUID uuid = UUID.randomUUID();
+        Receipt receipt = new Receipt(1L, uuid, new BigDecimal(1), PaymentType.CREDIT_CARD, LocalDateTime.parse("2023-10-06T01:16:56"));
+        when(paymentService.getReceiptByOrderId(uuid)).thenReturn(receipt);
+        String urlTemplate = String.format("/payment/%s/check", uuid);
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate))
                 .andExpect(MockMvcResultMatchers.jsonPath("id").value(receipt.id()))
-                .andExpect(MockMvcResultMatchers.jsonPath("orderId").value(receipt.orderId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("orderId").value(receipt.orderId().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("checkAmount").value(receipt.checkAmount()))
                 .andExpect(MockMvcResultMatchers.jsonPath("paymentType").value(receipt.paymentType().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("createdDate").value(receipt.createdDate().toString()));
@@ -44,15 +47,17 @@ class PaymentControllerTest {
 
     @Test
     void payOrder_whenCorrectRequest_thenCorrectResponse() throws Exception {
+        UUID uuid = UUID.randomUUID();
         NewPaymentDto newPaymentDto = new NewPaymentDto(new BigDecimal(10));
-        PaymentDto paymentDto = new PaymentDto(1L,true, LocalDateTime.parse("2023-10-06T01:16:56"));
-        when(paymentService.payOrder(1L,newPaymentDto)).thenReturn(paymentDto);
+        PaymentDto paymentDto = new PaymentDto(uuid, true, LocalDateTime.parse("2023-10-06T01:16:56"));
+        when(paymentService.payOrder(uuid, newPaymentDto)).thenReturn(paymentDto);
+        String urlTemplate = String.format("/pay/%s", uuid);
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/pay/1")
+                        .post(urlTemplate)
                         .content(asJsonString(newPaymentDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("orderId").value(paymentDto.orderId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("orderId").value(paymentDto.orderId().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("isPaid").value(paymentDto.isPaid().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("createdDate").value(paymentDto.createdDate().toString()));
     }
