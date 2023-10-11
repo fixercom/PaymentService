@@ -17,6 +17,7 @@ import ru.aston.intensive.paymentservice.service.PaymentService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.random.RandomGenerator;
 
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public PaymentDto payOrder(Long orderId, NewPaymentDto newPaymentDto) {
+    public PaymentDto payOrder(UUID orderId, NewPaymentDto newPaymentDto) {
         Optional<Payment> paymentOptional = paymentRepository.findByOrderId(orderId);
         Payment payment = createPayment(orderId, newPaymentDto);
         if (paymentOptional.isPresent()) {
@@ -46,13 +47,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Receipt getReceiptByOrderId(Long orderId) {
+    public Receipt getReceiptByOrderId(UUID orderId) {
         Payment payment = paymentRepository.findByOrderIdAndPaymentStatus(orderId, PaymentStatus.PAID)
                 .orElseThrow(() -> new OrderIsNotPaidException(orderId));
         return paymentMapper.toReceipt(payment);
     }
 
-    private Payment createPayment(Long orderId, NewPaymentDto newPaymentDto) {
+    private Payment createPayment(UUID orderId, NewPaymentDto newPaymentDto) {
         Payment payment = paymentMapper.toPayment(orderId, newPaymentDto);
         payment.setCreatedDate(LocalDateTime.now());
         payment.setPaymentStatus(generatePaymentStatus());

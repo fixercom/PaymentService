@@ -14,6 +14,7 @@ import ru.aston.intensive.paymentservice.dao.enums.PaymentType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,9 +32,10 @@ class PaymentRepositoryTest extends AbstractIntegrationTest {
 
     @Test
     void findByOrderIdTest() {
+        UUID uuid = UUID.randomUUID();
         LocalDateTime dateTime = LocalDateTime.of(2024,10,7,16,0);
         Payment payment = Payment.builder()
-                .orderId(400L)
+                .orderId(uuid)
                 .checkAmount(new BigDecimal(63900))
                 .paymentStatus(PaymentStatus.PAID)
                 .paymentType(PaymentType.DEBIT_CARD)
@@ -41,12 +43,12 @@ class PaymentRepositoryTest extends AbstractIntegrationTest {
                 .build();
         entityManager.persist(payment);
 
-        Optional<Payment> optionalPayment = paymentRepository.findByOrderId(400L);
+        Optional<Payment> optionalPayment = paymentRepository.findByOrderId(uuid);
         Payment loadedPayment = optionalPayment.orElse(new Payment());
         assertAll(
                 () -> assertTrue(optionalPayment.isPresent()),
                 () -> assertNotNull(loadedPayment.getId()),
-                () -> assertEquals(400L, loadedPayment.getOrderId()),
+                () -> assertEquals(uuid, loadedPayment.getOrderId()),
                 () -> assertEquals(BigDecimal.valueOf(63900), loadedPayment.getCheckAmount()),
                 () -> assertEquals(PaymentStatus.PAID, loadedPayment.getPaymentStatus()),
                 () -> assertEquals(PaymentType.DEBIT_CARD, loadedPayment.getPaymentType()),
@@ -57,8 +59,9 @@ class PaymentRepositoryTest extends AbstractIntegrationTest {
 
     @Test
     void findByOrderIdAndPaymentStatus() {
+        UUID uuid = UUID.randomUUID();
         Payment payment1 = Payment.builder()
-                .orderId(400L)
+                .orderId(uuid)
                 .checkAmount(new BigDecimal(63900))
                 .paymentStatus(PaymentStatus.PAID)
                 .paymentType(PaymentType.DEBIT_CARD)
@@ -68,9 +71,9 @@ class PaymentRepositoryTest extends AbstractIntegrationTest {
 
         assertAll(
                 () -> assertTrue(paymentRepository
-                        .findByOrderIdAndPaymentStatus(400L, PaymentStatus.PAID).isPresent()),
+                        .findByOrderIdAndPaymentStatus(uuid, PaymentStatus.PAID).isPresent()),
                 () -> assertFalse(paymentRepository
-                        .findByOrderIdAndPaymentStatus(400L, PaymentStatus.REJECTED).isPresent())
+                        .findByOrderIdAndPaymentStatus(uuid, PaymentStatus.REJECTED).isPresent())
         );
     }
 

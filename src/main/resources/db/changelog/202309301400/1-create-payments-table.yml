@@ -18,7 +18,7 @@ databaseChangeLog:
                     nullable: false
                     unique: true
                   name: order_id
-                  type: BIGINT
+                  type: UUID
               - column:
                   constraints:
                     nullable: false

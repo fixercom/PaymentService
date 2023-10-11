@@ -2,13 +2,15 @@ package ru.aston.intensive.paymentservice.exception;
 
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 public class OrderIsAlreadyPaidException extends RuntimeException {
 
-    private static final String BASE_MESSAGE = "Order with id %d has already been paid for";
+    private static final String BASE_MESSAGE = "Order with id %s has already been paid for";
     private final String message;
 
-    public OrderIsAlreadyPaidException(Long orderId) {
+    public OrderIsAlreadyPaidException(UUID orderId) {
         message = String.format(BASE_MESSAGE, orderId);
     }
 
