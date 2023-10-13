@@ -13,6 +13,8 @@ import ru.aston.intensive.paymentservice.dao.enums.PaymentType;
 import ru.aston.intensive.paymentservice.dto.NewPaymentDto;
 import ru.aston.intensive.paymentservice.dto.PaymentDto;
 import ru.aston.intensive.paymentservice.dto.Receipt;
+import ru.aston.intensive.paymentservice.exception.OrderIsAlreadyPaidException;
+import ru.aston.intensive.paymentservice.exception.OrderIsNotPaidException;
 import ru.aston.intensive.paymentservice.service.PaymentService;
 
 import java.math.BigDecimal;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = PaymentController.class)
 class PaymentControllerTest {
@@ -46,6 +49,15 @@ class PaymentControllerTest {
     }
 
     @Test
+    void getReceiptByOrderId_whenOrderIsNotPaid_thenNotFoundResponse() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        when(paymentService.getReceiptByOrderId(uuid)).thenThrow(new OrderIsNotPaidException(uuid));
+        String urlTemplate = String.format("/payment/%s/check", uuid);
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void payOrder_whenCorrectRequest_thenCorrectResponse() throws Exception {
         UUID uuid = UUID.randomUUID();
         NewPaymentDto newPaymentDto = new NewPaymentDto(new BigDecimal(10));
@@ -60,6 +72,21 @@ class PaymentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("orderId").value(paymentDto.orderId().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("isPaid").value(paymentDto.isPaid().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("createdDate").value(paymentDto.createdDate().toString()));
+    }
+
+    @Test
+    void payOrder_whenOrderHasAlreadyPaid_thenConflictResponse() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        NewPaymentDto newPaymentDto = new NewPaymentDto(new BigDecimal(10));
+        when(paymentService.payOrder(uuid, newPaymentDto)).thenThrow(new OrderIsAlreadyPaidException(uuid));
+        String urlTemplate = String.format("/pay/%s", uuid);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(urlTemplate)
+                        .content(asJsonString(newPaymentDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
     }
 
     public static String asJsonString(final Object obj) {
